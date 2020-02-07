@@ -1,5 +1,5 @@
 import warnings
-# warnings.filterwarnings("ignore")  # nopep8
+warnings.filterwarnings("ignore")  # nopep8
 import os
 import json
 import torch
