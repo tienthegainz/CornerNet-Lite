@@ -48,7 +48,7 @@ class COCO(DETECTION):
                            cls_id in self._coco2name.items()}
 
         if split is not None:
-            coco_dir = os.path.join(sys_config.data_dir, "shop_data", "coco")
+            coco_dir = os.path.join("shop_data", "coco")
 
             self._data_dir = os.path.join(coco_dir, "images")
             self._anno_file = os.path.join(
