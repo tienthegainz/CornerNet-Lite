@@ -19,7 +19,7 @@
     "stepsize": 450000,
     "snapshot": 5000,
 
-    "chunk_sizes": 16,
+    "chunk_sizes": [16],
 
     "data_dir": "./data"
   },
