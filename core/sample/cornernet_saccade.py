@@ -162,7 +162,7 @@ def cornernet_saccade(system_configs, db, k_ind, data_aug, debug):
     br_regrs = np.zeros((batch_size, max_objects, 2), dtype=np.float32)
     tl_tags = np.zeros((batch_size, max_objects), dtype=np.int64)
     br_tags = np.zeros((batch_size, max_objects), dtype=np.int64)
-    tag_masks = np.zeros((batch_size, max_objects), dtype=np.bool)
+    tag_masks = np.zeros((batch_size, max_objects), dtype=np.uint8)
     tag_lens = np.zeros((batch_size, ), dtype=np.int32)
     attentions = [np.zeros((batch_size, 1, att_size[0], att_size[1]),
                            dtype=np.float32) for att_size in att_sizes]
