@@ -1,9 +1,8 @@
-#!/usr/bin/env python
+import warnings
+# warnings.filterwarnings("ignore")  # nopep8
 import os
 import json
 import torch
-import warnings
-warnings.filterwarnings("ignore")  # nopep8
 import numpy as np
 import queue
 import pprint
