@@ -144,9 +144,23 @@ class NetworkFactory(object):
     def load_params(self, iteration):
         cache_file = self.system_config.snapshot_file.format(iteration)
         print("loading model from {}".format(cache_file))
-        with open(cache_file, "rb") as f:
-            params = torch.load(f)
-            self.model.load_state_dict(params)
+        # with open(cache_file, "rb") as f:
+        #     params = torch.load(f)
+        #     self.model.load_state_dict(params)
+        cache_params = torch.load(
+            cache_file, map_location=lambda storage, loc: storage)
+        cache_dict = cache_params
+        model_dict = self.model.state_dict()
+        # check loaded parameters and created model parameters
+        for k, v in cache_dict.items():
+            if k in model_dict:
+                if cache_dict[k].shape != model_dict[k].shape:
+                    print('Skip loading parameter {}, required shape{}, loaded shape{}.'.format(
+                        k, model_dict[k].shape, cache_dict[k].shape))
+                    cache_dict[k] = model_dict[k]
+
+        model_dict.update(cache_dict)
+        self.model.load_state_dict(cache_dict, strict=False)
 
     def save_params(self, iteration):
         cache_file = self.system_config.snapshot_file.format(iteration)
