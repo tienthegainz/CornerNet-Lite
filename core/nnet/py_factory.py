@@ -8,20 +8,23 @@ from ..models.py_utils.data_parallel import DataParallel
 
 torch.manual_seed(317)
 
+
 class Network(nn.Module):
     def __init__(self, model, loss):
         super(Network, self).__init__()
 
         self.model = model
-        self.loss  = loss
+        self.loss = loss
 
     def forward(self, xs, ys, **kwargs):
         preds = self.model(*xs, **kwargs)
-        loss  = self.loss(preds, ys, **kwargs)
+        loss = self.loss(preds, ys, **kwargs)
         return loss
 
 # for model backward compatibility
 # previously model was wrapped by DataParallel module
+
+
 class DummyModule(nn.Module):
     def __init__(self, model):
         super(DummyModule, self).__init__()
@@ -30,15 +33,16 @@ class DummyModule(nn.Module):
     def forward(self, *xs, **kwargs):
         return self.module(*xs, **kwargs)
 
+
 class NetworkFactory(object):
     def __init__(self, system_config, model, distributed=False, gpu=None):
         super(NetworkFactory, self).__init__()
 
         self.system_config = system_config
 
-        self.gpu     = gpu
-        self.model   = DummyModule(model)
-        self.loss    = model.loss
+        self.gpu = gpu
+        self.model = DummyModule(model)
+        self.loss = model.loss
         self.network = Network(self.model, self.loss)
 
         if distributed:
@@ -48,7 +52,8 @@ class NetworkFactory(object):
             self.network = convert_syncbn_model(self.network)
             self.network = DistributedDataParallel(self.network)
         else:
-            self.network = DataParallel(self.network, chunk_sizes=system_config.chunk_sizes)
+            self.network = DataParallel(
+                self.network, chunk_sizes=system_config.chunk_sizes)
 
         total_params = 0
         for params in self.model.parameters():
@@ -65,7 +70,7 @@ class NetworkFactory(object):
         elif system_config.opt_algo == "sgd":
             self.optimizer = torch.optim.SGD(
                 filter(lambda p: p.requires_grad, self.model.parameters()),
-                lr=system_config.learning_rate, 
+                lr=system_config.learning_rate,
                 momentum=0.9, weight_decay=0.0001
             )
         else:
@@ -117,10 +122,24 @@ class NetworkFactory(object):
             param_group["lr"] = lr
 
     def load_pretrained_params(self, pretrained_model):
-        print("loading from {}".format(pretrained_model))
-        with open(pretrained_model, "rb") as f:
-            params = torch.load(f)
-            self.model.load_state_dict(params)
+        # print("loading from {}".format(pretrained_model))
+        # with open(pretrained_model, "rb") as f:
+        #     params = torch.load(f)
+        #     self.model.load_state_dict(params)
+        pre_params = torch.load(
+            pretrained_model, map_location=lambda storage, loc: storage)
+        pretrained_dict = pre_params
+        model_dict = self.model.state_dict()
+        # check loaded parameters and created model parameters
+        for k, v in pretrained_dict.items():
+            if k in model_dict:
+                if pretrained_dict[k].shape != model_dict[k].shape:
+                    print('Skip loading parameter {}, required shape{}, loaded shape{}.'.format(
+                        k, model_dict[k].shape, pretrained_dict[k].shape))
+                    pretrained_dict[k] = model_dict[k]
+
+        model_dict.update(pretrained_dict)
+        self.model.load_state_dict(pretrained_dict, strict=False)
 
     def load_params(self, iteration):
         cache_file = self.system_config.snapshot_file.format(iteration)
