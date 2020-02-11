@@ -44,7 +44,7 @@
     "test_scales": [1],
     "test_flipped": false,
 
-    "top_k": 20,
+    "top_k": 5,
     "num_dets": 100,
     "categories": 24,
     "ae_threshold": 0.5,

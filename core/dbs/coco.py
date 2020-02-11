@@ -54,9 +54,16 @@ class COCO(DETECTION):
             self._anno_file = os.path.join(
                 coco_dir, "annotations", "trainval.json")
 
-            self._detections, self._eval_ids = self._load_coco_annos()
-            self._image_ids = list(self._detections.keys())
-            self._db_inds = np.arange(len(self._image_ids))
+        else split == 'val':
+            coco_dir = os.path.join("shop_data", "coco", "validation")
+
+            self._data_dir = os.path.join(coco_dir, "images")
+            self._anno_file = os.path.join(
+                coco_dir, "annotations", "val.json")
+
+        self._detections, self._eval_ids = self._load_coco_annos()
+        self._image_ids = list(self._detections.keys())
+        self._db_inds = np.arange(len(self._image_ids))
 
     def _load_coco_annos(self):
         from pycocotools.coco import COCO
