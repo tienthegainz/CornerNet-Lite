@@ -166,6 +166,7 @@ def train(training_dbs, validation_db, system_config, model, args):
             raise ValueError("pretrained model does not exist")
         print("Process {}: loading from pretrained model".format(rank))
         nnet.load_pretrained_params(pretrained_model)
+        # exit()
 
     if start_iter:
         nnet.load_params(start_iter)
@@ -241,7 +242,6 @@ def main(gpu, ngpus_per_node, args):
     # hg_model.eval()
 
     # print('TESTING MODEL END HERE')
-    exit()
 
     train_split = system_config.train_split
     val_split = system_config.val_split

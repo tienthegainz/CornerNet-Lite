@@ -172,6 +172,6 @@ class NetworkFactory(object):
 
     def learn_transfer(self):
         print('Freezing Hourglass backbone')
-        for param in self.model.parameters():
+        for param in self.model.module.hg.parameters():
             param.requires_grad = False
-        self.model.hg.eval()
+        self.model.module.hg.eval()
