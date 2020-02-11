@@ -47,14 +47,14 @@ class COCO(DETECTION):
         self._name2coco = {cls_name: cls_id for cls_name,
                            cls_id in self._coco2name.items()}
 
-        if split is not None:
+        if split == "trainval":
             coco_dir = os.path.join("shop_data", "coco")
 
             self._data_dir = os.path.join(coco_dir, "images")
             self._anno_file = os.path.join(
                 coco_dir, "annotations", "trainval.json")
 
-        else split == 'val':
+        elif split == 'minival':
             coco_dir = os.path.join("shop_data", "coco", "validation")
 
             self._data_dir = os.path.join(coco_dir, "images")
