@@ -19,6 +19,7 @@
     "stepsize": 24000,
     "snapshot": 2500,
 
+    "pretrain": "core/cache/CornerNet_Squeeze_pretrained.pkl",
     "chunk_sizes": [16],
 
     "data_dir": "./data"

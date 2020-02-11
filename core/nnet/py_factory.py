@@ -140,6 +140,7 @@ class NetworkFactory(object):
 
         model_dict.update(pretrained_dict)
         self.model.load_state_dict(pretrained_dict, strict=False)
+        self.learn_transfer()
 
     def load_params(self, iteration):
         cache_file = self.system_config.snapshot_file.format(iteration)
@@ -168,3 +169,9 @@ class NetworkFactory(object):
         with open(cache_file, "wb") as f:
             params = self.model.state_dict()
             torch.save(params, f)
+
+    def learn_transfer(self):
+        print('Freezing Hourglass backbone')
+        for param in self.model.parameters():
+            param.requires_grad = False
+        self.model.hg.eval()

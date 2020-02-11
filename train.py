@@ -16,6 +16,8 @@ import torch.multiprocessing as mp
 
 from tqdm import tqdm
 from torch.multiprocessing import Process, Queue, Pool
+from torch import nn
+import torch
 
 from core.dbs import datasets
 from core.utils import stdout_to_tqdm
@@ -231,6 +233,15 @@ def main(gpu, ngpus_per_node, args):
     model_file = "core.models.{}".format(args.cfg_file)
     model_file = importlib.import_module(model_file)
     model = model_file.model()
+
+    # VALIDATE
+    # hg_model = model.hg
+    # for param in hg_model.parameters():
+    #     param.requires_grad = False
+    # hg_model.eval()
+
+    # print('TESTING MODEL END HERE')
+    exit()
 
     train_split = system_config.train_split
     val_split = system_config.val_split

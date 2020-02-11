@@ -16,3 +16,7 @@ nnet/__pycache__/
 
 *.pyc
 *.o*
+
+shop_data/
+
+*.so
