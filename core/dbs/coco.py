@@ -48,6 +48,7 @@ class COCO(DETECTION):
                            cls_id in self._coco2name.items()}
 
         if split == "trainval":
+            print('Loading Train dataset')
             coco_dir = os.path.join("shop_data", "coco")
 
             self._data_dir = os.path.join(coco_dir, "images")
@@ -55,6 +56,7 @@ class COCO(DETECTION):
                 coco_dir, "annotations", "trainval.json")
 
         elif split == 'minival':
+            print('Loading Validation dataset')
             coco_dir = os.path.join("shop_data", "coco", "validation")
 
             self._data_dir = os.path.join(coco_dir, "images")
