@@ -35,7 +35,7 @@ class DummyModule(nn.Module):
 
 
 class NetworkFactory(object):
-    def __init__(self, system_config, model, distributed=False, gpu=None):
+    def __init__(self, system_config, model, distributed=False, gpu=None, test=False):
         super(NetworkFactory, self).__init__()
 
         self.system_config = system_config
@@ -76,6 +76,8 @@ class NetworkFactory(object):
             )
         else:
             raise ValueError("unknown optimizer")
+        if test:
+            self.eval_mode()
 
     def cuda(self):
         self.model.cuda()
@@ -86,6 +88,8 @@ class NetworkFactory(object):
             self.learn_transfer()
 
     def eval_mode(self):
+        for param in self.model.module.parameters():
+            param.requires_grad = False
         self.network.eval()
 
     def _t_cuda(self, xs):

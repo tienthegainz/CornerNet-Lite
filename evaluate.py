@@ -13,6 +13,7 @@ from core.nnet.py_factory import NetworkFactory
 
 torch.backends.cudnn.benchmark = False
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Evaluation Script")
     parser.add_argument("cfg_file", help="config file", type=str)
@@ -28,16 +29,18 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+
 def make_dirs(directories):
     for directory in directories:
         if not os.path.exists(directory):
             os.makedirs(directory)
 
+
 def test(db, system_config, model, args):
-    split    = args.split
+    split = args.split
     testiter = args.testiter
-    debug    = args.debug
-    suffix   = args.suffix
+    debug = args.debug
+    suffix = args.suffix
 
     result_dir = system_config.result_dir
     result_dir = os.path.join(result_dir, str(testiter), split)
@@ -51,7 +54,7 @@ def test(db, system_config, model, args):
     print("loading parameters at iteration: {}".format(test_iter))
 
     print("building neural network...")
-    nnet = NetworkFactory(system_config, model)
+    nnet = NetworkFactory(system_config, model, test=True)
     print("loading parameters...")
     nnet.load_params(test_iter)
 
@@ -59,26 +62,28 @@ def test(db, system_config, model, args):
     nnet.eval_mode()
     test_func(system_config, db, nnet, result_dir, debug=debug)
 
+
 def main(args):
     if args.suffix is None:
         cfg_file = os.path.join("./configs", args.cfg_file + ".json")
     else:
-        cfg_file = os.path.join("./configs", args.cfg_file + "-{}.json".format(args.suffix))
+        cfg_file = os.path.join(
+            "./configs", args.cfg_file + "-{}.json".format(args.suffix))
     print("cfg_file: {}".format(cfg_file))
 
     with open(cfg_file, "r") as f:
         config = json.load(f)
-            
+
     config["system"]["snapshot_name"] = args.cfg_file
     system_config = SystemConfig().update_config(config["system"])
 
-    model_file  = "core.models.{}".format(args.cfg_file)
-    model_file  = importlib.import_module(model_file)
-    model       = model_file.model()
+    model_file = "core.models.{}".format(args.cfg_file)
+    model_file = importlib.import_module(model_file)
+    model = model_file.model()
 
     train_split = system_config.train_split
-    val_split   = system_config.val_split
-    test_split  = system_config.test_split
+    val_split = system_config.val_split
+    test_split = system_config.test_split
 
     split = {
         "training": train_split,
@@ -89,7 +94,8 @@ def main(args):
     print("loading all datasets...")
     dataset = system_config.dataset
     print("split: {}".format(split))
-    testing_db = datasets[dataset](config["db"], split=split, sys_config=system_config)
+    testing_db = datasets[dataset](
+        config["db"], split=split, sys_config=system_config)
 
     print("system config...")
     pprint.pprint(system_config.full)
@@ -98,6 +104,7 @@ def main(args):
     pprint.pprint(testing_db.configs)
 
     test(testing_db, system_config, model, args)
+
 
 if __name__ == "__main__":
     args = parse_args()
