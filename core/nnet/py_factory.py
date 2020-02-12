@@ -44,6 +44,7 @@ class NetworkFactory(object):
         self.model = DummyModule(model)
         self.loss = model.loss
         self.network = Network(self.model, self.loss)
+        self.freeze = False
 
         if distributed:
             from apex.parallel import DistributedDataParallel, convert_syncbn_model
@@ -81,6 +82,8 @@ class NetworkFactory(object):
 
     def train_mode(self):
         self.network.train()
+        if self.freeze:
+            self.learn_transfer()
 
     def eval_mode(self):
         self.network.eval()
@@ -122,10 +125,6 @@ class NetworkFactory(object):
             param_group["lr"] = lr
 
     def load_pretrained_params(self, pretrained_model):
-        # print("loading from {}".format(pretrained_model))
-        # with open(pretrained_model, "rb") as f:
-        #     params = torch.load(f)
-        #     self.model.load_state_dict(params)
         pre_params = torch.load(
             pretrained_model, map_location=lambda storage, loc: storage)
         pretrained_dict = pre_params
@@ -140,6 +139,7 @@ class NetworkFactory(object):
 
         model_dict.update(pretrained_dict)
         self.model.load_state_dict(pretrained_dict, strict=False)
+        self.freeze = True
         self.learn_transfer()
 
     def load_params(self, iteration):
