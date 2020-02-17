@@ -83,9 +83,11 @@ class NetworkFactory(object):
         self.model.cuda()
 
     def train_mode(self):
+        for param in self.model.module.parameters():
+            param.requires_grad = True
         self.network.train()
-        if self.freeze:
-            self.learn_transfer()
+        # if self.freeze:
+        #     self.learn_transfer()
 
     def eval_mode(self):
         for param in self.model.module.parameters():
