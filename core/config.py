@@ -9,7 +9,7 @@ class SystemConfig(object):
         self._configs["sampling_function"] = "coco_detection"
 
         # Training Config
-        self._configs["display"] = 100
+        self._configs["display"] = 20
         self._configs["snapshot"] = 400
         self._configs["stepsize"] = 5000
         self._configs["learning_rate"] = 0.001

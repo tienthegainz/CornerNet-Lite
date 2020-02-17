@@ -195,9 +195,6 @@ def train(training_dbs, validation_db, system_config, model, args):
             if display and iteration % display == 0:
                 print("Process {}: training loss at iteration {}: {}".format(
                     rank, iteration, training_loss.item()))
-                train_loss.append(training_loss.item())
-
-            del training_loss
 
             if val_iter and validation_db.db_inds.size and iteration % val_iter == 0:
                 nnet.eval_mode()
@@ -206,10 +203,13 @@ def train(training_dbs, validation_db, system_config, model, args):
                 print("Process {}: validation loss at iteration {}: {}".format(
                     rank, iteration, validation_loss.item()))
                 val_loss.append(validation_loss.item())
+                train_loss.append(training_loss.item())
+
                 nnet.train_mode()
 
                 del validation_loss
 
+            del training_loss
             if iteration % snapshot == 0 and rank == 0:
                 nnet.save_params(iteration)
 
