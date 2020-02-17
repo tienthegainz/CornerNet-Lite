@@ -1,13 +1,13 @@
 {
   "system": {
     "dataset": "COCO",
-    "batch_size": 16,
+    "batch_size": 32,
     "sampling_function": "cornernet",
 
     "train_split": "trainval",
     "val_split": "minival",
 
-    "learning_rate": 0.00025,
+    "learning_rate": 0.0001,
     "decay_rate": 10,
 
     "val_iter": 100,
@@ -15,12 +15,12 @@
     "opt_algo": "adam",
     "prefetch_size": 5,
 
-    "max_iter": 25000,
-    "stepsize": 24000,
+    "max_iter": 40000,
+    "stepsize": 32000,
     "snapshot": 2500,
 
     "pretrain": "cache/nnet/CornerNet_Squeeze/CornerNet_Squeeze_pretrained.pkl",
-    "chunk_sizes": [16],
+    "chunk_sizes": [32],
 
     "data_dir": "./data"
   },

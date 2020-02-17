@@ -52,7 +52,11 @@ def cornernet(db, nnet, result_dir, debug=False, decode_func=decode):
         image = cv2.imread(image_path)
 
         timer.tic()
-        top_bboxes[image_id] = cornernet_inference(db, nnet, image)
+        try:
+            top_bboxes[image_id] = cornernet_inference(db, nnet, image)
+        except Exception as err:
+            print('{} --> {}'.format(image_path, err))
+
         timer.toc()
 
         if debug:

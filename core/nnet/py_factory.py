@@ -166,6 +166,8 @@ class NetworkFactory(object):
 
         model_dict.update(cache_dict)
         self.model.load_state_dict(cache_dict, strict=False)
+        self.freeze = True
+        self.learn_transfer()
 
     def save_params(self, iteration):
         cache_file = self.system_config.snapshot_file.format(iteration)
