@@ -19,6 +19,8 @@ from torch.multiprocessing import Process, Queue, Pool
 from torch import nn
 import torch
 
+import matplotlib.pyplot as plt
+
 from core.dbs import datasets
 from core.utils import stdout_to_tqdm
 from core.config import SystemConfig
@@ -181,6 +183,10 @@ def train(training_dbs, validation_db, system_config, model, args):
         print("training start...")
     nnet.cuda()
     nnet.train_mode()
+    # For plotting
+    train_loss = list()
+    val_loss = list()
+    ######
     with stdout_to_tqdm() as save_stdout:
         for iteration in tqdm(range(start_iter + 1, max_iteration + 1), file=save_stdout, ncols=80):
             training = pinned_training_queue.get(block=True)
@@ -189,6 +195,8 @@ def train(training_dbs, validation_db, system_config, model, args):
             if display and iteration % display == 0:
                 print("Process {}: training loss at iteration {}: {}".format(
                     rank, iteration, training_loss.item()))
+                train_loss.append(training_loss.item())
+
             del training_loss
 
             if val_iter and validation_db.db_inds.size and iteration % val_iter == 0:
@@ -197,6 +205,7 @@ def train(training_dbs, validation_db, system_config, model, args):
                 validation_loss = nnet.validate(**validation)
                 print("Process {}: validation loss at iteration {}: {}".format(
                     rank, iteration, validation_loss.item()))
+                val_loss.append(validation_loss.item())
                 nnet.train_mode()
 
             if iteration % snapshot == 0 and rank == 0:
@@ -213,6 +222,15 @@ def train(training_dbs, validation_db, system_config, model, args):
     # terminating data fetching processes
     terminate_tasks(training_tasks)
     terminate_tasks(validation_tasks)
+    # plot the training process
+    plt.plot(train_loss, label="train")
+    plt.plot(val_loss, label="validation")
+    plt.xlabel('Epoches')
+    # Set the y axis label of the current axis.
+    plt.ylabel('Loss')
+    # Set a title of the current axes.
+    plt.title('Train loss log')
+    plt.savefig('log.png')
 
 
 def main(gpu, ngpus_per_node, args):

@@ -1,6 +1,7 @@
 import os
 import numpy as np
 
+
 class SystemConfig(object):
     def __init__(self):
         self._configs = {}
@@ -8,30 +9,30 @@ class SystemConfig(object):
         self._configs["sampling_function"] = "coco_detection"
 
         # Training Config
-        self._configs["display"]           = 5
-        self._configs["snapshot"]          = 400
-        self._configs["stepsize"]          = 5000
-        self._configs["learning_rate"]     = 0.001
-        self._configs["decay_rate"]        = 10
-        self._configs["max_iter"]          = 100000
-        self._configs["val_iter"]          = 20
-        self._configs["batch_size"]        = 1
-        self._configs["snapshot_name"]     = None
-        self._configs["prefetch_size"]     = 100
-        self._configs["pretrain"]          = None
-        self._configs["opt_algo"]          = "adam"
-        self._configs["chunk_sizes"]       = None
+        self._configs["display"] = 100
+        self._configs["snapshot"] = 400
+        self._configs["stepsize"] = 5000
+        self._configs["learning_rate"] = 0.001
+        self._configs["decay_rate"] = 10
+        self._configs["max_iter"] = 100000
+        self._configs["val_iter"] = 20
+        self._configs["batch_size"] = 1
+        self._configs["snapshot_name"] = None
+        self._configs["prefetch_size"] = 100
+        self._configs["pretrain"] = None
+        self._configs["opt_algo"] = "adam"
+        self._configs["chunk_sizes"] = None
 
         # Directories
-        self._configs["data_dir"]   = "./data"
-        self._configs["cache_dir"]  = "./cache"
+        self._configs["data_dir"] = "./data"
+        self._configs["cache_dir"] = "./cache"
         self._configs["config_dir"] = "./config"
         self._configs["result_dir"] = "./results"
 
         # Split
         self._configs["train_split"] = "training"
-        self._configs["val_split"]   = "validation"
-        self._configs["test_split"]  = "testdev"
+        self._configs["val_split"] = "validation"
+        self._configs["test_split"] = "testdev"
 
         # Rng
         self._configs["data_rng"] = np.random.RandomState(123)
@@ -83,7 +84,8 @@ class SystemConfig(object):
 
     @property
     def result_dir(self):
-        result_dir = os.path.join(self._configs["result_dir"], self.snapshot_name)
+        result_dir = os.path.join(
+            self._configs["result_dir"], self.snapshot_name)
         if not os.path.exists(result_dir):
             os.makedirs(result_dir)
         return result_dir
@@ -106,7 +108,8 @@ class SystemConfig(object):
 
     @property
     def snapshot_file(self):
-        snapshot_file = os.path.join(self.snapshot_dir, self.snapshot_name + "_{}.pkl")
+        snapshot_file = os.path.join(
+            self.snapshot_dir, self.snapshot_name + "_{}.pkl")
         return snapshot_file
 
     @property
