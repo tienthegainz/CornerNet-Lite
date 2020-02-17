@@ -208,6 +208,8 @@ def train(training_dbs, validation_db, system_config, model, args):
                 val_loss.append(validation_loss.item())
                 nnet.train_mode()
 
+                del validation_loss
+
             if iteration % snapshot == 0 and rank == 0:
                 nnet.save_params(iteration)
 
